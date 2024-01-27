@@ -2,7 +2,7 @@
 # Live Transcription and Translation Extension
 
 ## Introduction
-**TL (Translation Layer)** is a web application with both server and client components. The server is built using FastAPI and Flask, and the client is designed as a browser extension.
+**TL (Translation Layer)** is a web application with both server and client components. The server is built using FastAPI, and the client is designed as a browser extension.
 
 ## Server
 The server handles audio file processing and translation. It includes:
