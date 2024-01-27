@@ -40,3 +40,16 @@ Licensed under CC0.
 
 ## Documentation
 For FastAPI documentation, run the application and visit `http://127.0.0.1:8000/docs` or `/redoc`.
+
+## TODO
+- Make a docker image for the server
+- Make the client have better ux (readability and undefined response handling)
+- Maybe figure out a better way to do the chunking to improve translation accuracy? Maybe clean the audio if I have the headroom?
+- See if whisper can do a good enough job with fewer resources
+
+## Acknowledgements
+Friends have commented on the output as:
+- Ya it's actually pretty accurate
+- THAFS JINDA GOOD
+
+Thank you to Facebook Research for making the Seamless model because my own trained models kinda sucked and were not scalable to many languages! Yann LeCun is my hero.
