@@ -13,7 +13,7 @@ else:
     model = SeamlessM4Tv2Model.from_pretrained("seamless", local_files_only=True)
 
 
-async def translate(file):
+async def translate(file, tgt_lang="eng"):
     print("Translating")
     audio, orig_freq = torchaudio.load(file)
     print("Audio loaded")
@@ -21,7 +21,7 @@ async def translate(file):
     print("Audio resampled")
     audio_inputs = processor(audios=audio, return_tensors="pt", sampling_rate=16_000)
     print("Audio processed")
-    output_tokens = model.generate(**audio_inputs, tgt_lang="eng", generate_speech=False)
+    output_tokens = model.generate(**audio_inputs, tgt_lang=tgt_lang, generate_speech=False)
     print("Translation generated")
     transcription = processor.decode(output_tokens[0].tolist()[0], skip_special_tokens=True)
     print("Transcription decoded")

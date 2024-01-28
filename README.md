@@ -45,6 +45,7 @@ For FastAPI documentation, run the application and visit `http://127.0.0.1:8000/
 - Make a docker image for the server
 - Maybe figure out a better way to do the chunking to improve translation accuracy? Maybe clean the audio if I have the headroom?
 - See if whisper can do a good enough job with fewer resources
+- Add the ability to custom set target language (added to the backend, need to figure out how to make ux easy on frontend)
 
 ## Acknowledgements
 Friends have commented on the output as:
