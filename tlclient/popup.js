@@ -1,7 +1,9 @@
 let isRecording = false;
 const options = { mimeType: 'audio/webm' };
 let stream;
-let intervalId = null; // To manage the interval
+let intervalId = null;
+const MAX_TRANSCRIPT_LENGTH = 500;
+const translatedTextElement = document.getElementById('translatedText');
 
 function sendAudio(blob) {
     const formData = new FormData();
@@ -15,7 +17,13 @@ function sendAudio(blob) {
     .then(data => {
         console.log("Data received");
         console.log(data);
-        document.getElementById('translatedText').textContent += data.translatedText + " ";
+        if (data.translatedText) {
+            const translatedTextElement = document.getElementById('translatedText');
+            translatedTextElement.textContent += data.translatedText + " "
+            if (translatedTextElement.textContent.length > MAX_TRANSCRIPT_LENGTH) {
+                translatedTextElement.textContent = data.translatedText + " "
+            }
+        };
     })
     .catch(error => {
         console.error('Error:', error);
@@ -33,7 +41,7 @@ function startRecordingChunk() {
             }
         };
 
-        mediaRecorder.start(6000); // Start recording for 5 seconds
+        mediaRecorder.start(6000);
 
         setTimeout(() => {
             if (mediaRecorder.state === 'recording') {
@@ -49,7 +57,7 @@ document.getElementById('startButton').addEventListener('click', function() {
     if (isRecording) return;
     isRecording = true;
     console.log("Starting");
-    document.getElementById('translatedText').textContent = "Transcribing..." + "\n";
+    translatedTextElement.textContent = "Transcribing!" + "\n";
 
     chrome.tabCapture.capture({ audio: true, video: false }, function(capturedStream) {
         if (capturedStream) {
@@ -58,7 +66,7 @@ document.getElementById('startButton').addEventListener('click', function() {
             audio.srcObject = capturedStream;
             audio.play();
             startRecordingChunk();
-            intervalId = setInterval(startRecordingChunk, 6000); // Start a new chunk every 6 seconds
+            intervalId = setInterval(startRecordingChunk, 6000);
         } else if (chrome.runtime.lastError) {
             console.error('Error capturing tab:', chrome.runtime.lastError);
         }
@@ -67,5 +75,5 @@ document.getElementById('startButton').addEventListener('click', function() {
 
 document.getElementById('clearButton').addEventListener('click', function() {
     if (!isRecording) return;
-    document.getElementById('translatedText').textContent = "Transcribing..." + "\n";
+    translatedTextElement.textContent = "Transcribing!" + "\n";
 });
