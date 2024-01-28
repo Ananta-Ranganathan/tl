@@ -2,6 +2,7 @@ from transformers import SeamlessM4Tv2Model, AutoProcessor
 import torchaudio
 import asyncio
 import os 
+from enum import Enum
 
 if (not os.path.exists("seamless")):
     processor = AutoProcessor.from_pretrained("facebook/seamless-m4t-v2-large")
@@ -12,9 +13,8 @@ else:
     processor = AutoProcessor.from_pretrained("seamless", local_files_only=True)
     model = SeamlessM4Tv2Model.from_pretrained("seamless", local_files_only=True)
 
-
 async def translate(file, tgt_lang="eng"):
-    print("Translating")
+    print("Translating to ", tgt_lang)
     audio, orig_freq = torchaudio.load(file)
     print("Audio loaded")
     audio =  torchaudio.functional.resample(audio, orig_freq=orig_freq, new_freq=16_000)
@@ -26,6 +26,7 @@ async def translate(file, tgt_lang="eng"):
     transcription = processor.decode(output_tokens[0].tolist()[0], skip_special_tokens=True)
     print("Transcription decoded")
     return transcription
+
 
 async def main():
     print(await translate("test.wav"))

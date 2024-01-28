@@ -4,10 +4,13 @@ let stream;
 let intervalId = null;
 const MAX_TRANSCRIPT_LENGTH = 500;
 const translatedTextElement = document.getElementById('translatedText');
+const languageDropdown = document.getElementById('languageDropdown');
 
 function sendAudio(blob) {
     const formData = new FormData();
     formData.append('file', blob, 'audio.webm');
+    const selectedLanguage = languageDropdown.value;
+    formData.append('language', selectedLanguage);
 
     fetch('http://127.0.0.1:8000/translate', {
         method: 'POST',
@@ -18,7 +21,6 @@ function sendAudio(blob) {
         console.log("Data received");
         console.log(data);
         if (data.translatedText) {
-            const translatedTextElement = document.getElementById('translatedText');
             translatedTextElement.textContent += data.translatedText + " "
             if (translatedTextElement.textContent.length > MAX_TRANSCRIPT_LENGTH) {
                 translatedTextElement.textContent = data.translatedText + " "
