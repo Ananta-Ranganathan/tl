@@ -2,8 +2,6 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from translate import translate
-import time
-import asyncio
 import os
 import subprocess
 from typing import Optional
@@ -26,11 +24,14 @@ async def lifespan(app: FastAPI):
    yield
    subprocess.run(["./cleanup.sh"])
 
+@app.get("/")
+async def root():
+    return "TL Server"
+
 @app.post("/translate")
 async def translate_file(file: Optional[UploadFile] = File(None), language: str = Form(...)):
     if file is None:
         raise HTTPException(status_code=400, detail="No file found")
-    print(f"Language received: {language}")
     file_uuid = str(uuid.uuid4())
     original_file_path = f"original{file_uuid}.webm"
     converted_file_path = f"converted{file_uuid}.wav"
@@ -57,7 +58,6 @@ async def translate_file(file: Optional[UploadFile] = File(None), language: str 
     
     # Process the converted file for translation
     try:
-        print(language)
         translated_text = await translate(converted_file_path, language)
     except Exception as e:
         print(f"Error during translation: {e}")

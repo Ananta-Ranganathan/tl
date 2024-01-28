@@ -42,7 +42,6 @@ Licensed under CC0.
 For FastAPI documentation, run the application and visit `http://127.0.0.1:8000/docs` or `/redoc`.
 
 ## TODO
-- Make a docker image for the server
 - Maybe figure out a better way to do the chunking to improve translation accuracy? Maybe clean the audio if I have the headroom?
 - See if whisper can do a good enough job with fewer resources
 
