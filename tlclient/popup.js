@@ -5,6 +5,7 @@ let intervalId = null;
 const MAX_TRANSCRIPT_LENGTH = 500;
 const translatedTextElement = document.getElementById('translatedText');
 const languageDropdown = document.getElementById('languageDropdown');
+const api_url = 'http://localhost:8000';
 
 function sendAudio(blob) {
     const formData = new FormData();
@@ -12,7 +13,7 @@ function sendAudio(blob) {
     const selectedLanguage = languageDropdown.value;
     formData.append('language', selectedLanguage);
 
-    fetch('http://127.0.0.1:8000/translate', {
+    fetch(`${api_url}/translate`, {
         method: 'POST',
         body: formData,
     })
@@ -59,7 +60,6 @@ document.getElementById('startButton').addEventListener('click', function() {
     if (isRecording) return;
     isRecording = true;
     console.log("Starting");
-    translatedTextElement.textContent = "Transcribing!" + "\n";
 
     chrome.tabCapture.capture({ audio: true, video: false }, function(capturedStream) {
         if (capturedStream) {
@@ -77,5 +77,5 @@ document.getElementById('startButton').addEventListener('click', function() {
 
 document.getElementById('clearButton').addEventListener('click', function() {
     if (!isRecording) return;
-    translatedTextElement.textContent = "Transcribing!" + "\n";
+    translatedTextElement.textContent = "";
 });

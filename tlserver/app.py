@@ -42,6 +42,7 @@ async def translate_file(file: Optional[UploadFile] = File(None), language: str 
             buffer.write(await file.read())
     except Exception as e:
         print(f"Error saving file: {e}")
+        delete_file(original_file_path)
         raise HTTPException(status_code=500, detail="Error saving file")
     
     # Convert the file using FFmpeg
@@ -49,11 +50,14 @@ async def translate_file(file: Optional[UploadFile] = File(None), language: str 
         subprocess.run(["ffmpeg", "-y", "-f", "webm", "-i", original_file_path, "-acodec", "pcm_s16le", converted_file_path], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error during file conversion: {e}")
+        delete_file(original_file_path)
+        delete_file(converted_file_path)
         raise HTTPException(status_code=500, detail="Error during file conversion")
     
     # Ensure the converted file exists
     if not os.path.exists(converted_file_path):
         print(f"Converted file {converted_file_path} does not exist")
+        delete_file(original_file_path)
         raise HTTPException(status_code=500, detail="File not found after conversion")
     
     # Process the converted file for translation
@@ -61,16 +65,22 @@ async def translate_file(file: Optional[UploadFile] = File(None), language: str 
         translated_text = await translate(converted_file_path, language)
     except Exception as e:
         print(f"Error during translation: {e}")
+        delete_file(original_file_path)
+        delete_file(converted_file_path)
         raise HTTPException(status_code=500, detail="Error during translation")
     
     # Delete the files
+    delete_file(original_file_path)
+    delete_file(converted_file_path)
+    
+    return {"translatedText": translated_text}
+
+def delete_file(path):
     try:
-        os.remove(original_file_path)
-        os.remove(converted_file_path)
+        os.remove(path)
     except Exception as e:
         print(f"Error deleting files: {e}")
     
-    return {"translatedText": translated_text}
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True, threaded=True)
